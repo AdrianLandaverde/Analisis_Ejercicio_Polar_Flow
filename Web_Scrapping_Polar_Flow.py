@@ -1,14 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+import pandas as pd
 
 PATH= "C:\Program Files (x86)\chromedriver.exe"
 driver= webdriver.Chrome(PATH)
 
-correo= "usuario"
-contraseña = "cpntraseña"
-sesionInicial="link"
-sesionFinal="link2"
+correo= input("Correo del usuario: ")
+contraseña = input("Contraseña del usuario: ")
+sesionInicial=input("Liga de la sesión inicial: ")
+sesionFinal=input("Link de la sesión final: ")
 
 driver.get(sesionInicial)
 
@@ -22,6 +23,7 @@ time.sleep(5)
 password.send_keys(Keys.RETURN)
 
 Deportes=[]
+Fechas=[]
 Tiempos=[]
 Distancias=[]
 FrecuenciasMedia=[]
@@ -42,6 +44,7 @@ while(True):
     deporte= driver.find_element_by_id("sportHeading")
     
     Deportes.append((deporte.text).split("\n")[0])
+    Fechas.append((deporte.text).split("\n")[1])
     Tiempos.append(tiempo.text)
     Distancias.append(distancia.text)
     FrecuenciasMedia.append(frecuenciaMedia.text)
@@ -59,8 +62,26 @@ while(True):
     if(linkn!=sesionFinal):
         flechas.click()
     else:
+        print("Se ha llegado a la última sesión")
         break
 driver.quit()
+print("Web scrapping finalizado")
+
+df_datos=pd.DataFrame(
+    {"Deporte": Deportes,
+     "Fecha": Fechas,
+     "Tiempo": Tiempos,
+     "Distancia": Distancias,
+     "Frecuencia Media": FrecuenciasMedia,
+     "Calorias": Calorias,
+     "Tiempo Zona 1": TiemposZona1,
+     "Tiempo Zona 2": TiemposZona2,
+     "Tiempo Zona 3": TiemposZona3,
+     "Tiempo Zona 4": TiemposZona4,
+     "Tiempo Zona 5": TiemposZona5})
+
+df_datos.to_csv('datos_entrenamiento.csv',index=False, encoding="utf-8-sig")
+
 
 
 
